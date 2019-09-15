@@ -1,0 +1,8 @@
+.eslint*
+.travis.yml
+mocha.opts
+scripts
+src
+tests
+tsconfig.json
+webpack.config.js

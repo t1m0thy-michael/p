@@ -1,0 +1,25 @@
+sudo: false
+language: node_js
+node_js:
+  - node
+branches:
+  only:
+  - master
+install:
+  - npm ci
+script:
+  - npm run lint
+  - npm run test
+  - npm run build
+after_success:
+  - npm version patch
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: $NPM_USER
+  api_key: $NPM_TOKEN
+  on:
+    repo: t1m0thy-michael/p
+    branch: master
+notifications:
+  email: false
