@@ -1,7 +1,7 @@
 {
   "name": "tim_page",
   "version": "0.1.0",
-  "description": "_p: [page] Create SPAs",
+  "description": "p: [page] Create SPAs",
   "main": "index.js",
   "types": "types/index.d.ts",
   "scripts": {
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/t1m0thy-michael/p.git"
+    "url": "git://github.com/t1m0thy-michael/page.git"
   },
   "author": "Timothy Michael",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/t1m0thy-michael/p/issues"
+    "url": "https://github.com/t1m0thy-michael/page/issues"
   },
-  "homepage": "https://github.com/t1m0thy-michael/p#readme",
+  "homepage": "https://github.com/t1m0thy-michael/page#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.2.0",
     "@typescript-eslint/parser": "^2.2.0",

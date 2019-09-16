@@ -19,7 +19,7 @@ deploy:
   email: $NPM_USER
   api_key: $NPM_TOKEN
   on:
-    repo: t1m0thy-michael/p
+    repo: t1m0thy-michael/page
     branch: master
 notifications:
   email: false
