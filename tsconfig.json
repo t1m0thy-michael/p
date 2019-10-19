@@ -6,7 +6,7 @@
 		"noImplicitAny": true,
 		"strict": true,
 		"target": "es2017",
-		"moduleResolution": "Classic",
+		"moduleResolution": "node",
 		"sourceMap": true,
 		"declaration": true,
 		"outDir": "types"
@@ -14,7 +14,7 @@
 	"exclude": [
 		".vscode",
 		"node_modules",
-		"tests",
+		"**/*.test.*",
 		"types"
 	]
 }

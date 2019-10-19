@@ -2,9 +2,6 @@ sudo: false
 language: node_js
 node_js:
   - node
-branches:
-  only:
-  - master
 install:
   - npm ci
 script:
@@ -19,7 +16,7 @@ deploy:
   email: $NPM_USER
   api_key: $NPM_TOKEN
   on:
-    repo: t1m0thy-michael/page
+    repo: t1m0thy-michael/p
     branch: master
 notifications:
   email: false

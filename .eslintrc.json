@@ -40,16 +40,13 @@
             "property"
         ],
         "no-floating-decimal": 2,
-        "no-unused-vars": [
-            2,
-            {
-                "args": "after-used",
-                "argsIgnorePattern": "^CONFIG"
-            }
-        ]
+        "no-unused-vars": [0]
     },
     "globals": {
-        "require": false,
-        "google": false
+        "globalThis": false,
+        "global": false,
+        "window": false,
+        "google": false,
+        "require": false
     }
 }
