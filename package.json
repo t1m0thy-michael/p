@@ -25,13 +25,6 @@
   },
   "homepage": "https://github.com/t1m0thy-michael/p#readme",
   "devDependencies": {
-    "@t1m0thy_michael/e": "^0.1.1",
-    "@types/chai": "^4.2.2",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.5",
-    "@types/sinon": "^7.5.0",
-    "@typescript-eslint/eslint-plugin": "^2.2.0",
-    "@typescript-eslint/parser": "^2.2.0",
     "chai": "^4.2.0",
     "circular-dependency-plugin": "^5.2.0",
     "coveralls": "^3.0.6",
@@ -53,7 +46,6 @@
     "sinon": "^7.5.0",
     "ts-loader": "^5.4.3",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.4",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.4"

@@ -8,6 +8,7 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve('./build'),
+		publicPath: '/',
 	},
 	resolve: {
 		extensions: ['.js', '.ts'],
