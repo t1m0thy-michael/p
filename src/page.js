@@ -1,150 +1,87 @@
 import u from '@t1m0thy_michael/u'
-import e from '@t1m0thy_michael/e'
 import d from '@t1m0thy_michael/d'
-window.d = d
 
 import CONST from './constants'
 import routeFactory from './routeFactory'
-import { pathToArray, parseArg } from './utils'
-import errorPage from './errorPage'
+import navigate from './navigate'
 
-const hooks = {}
+export const p = (() => {
 
-// holds configured route objects. See routeFactory()
-const routes = []
+	const obj = {
+		id: u.makeID(10),
+		hooks: {
+			CONST: CONST,
+		},
+		// holds configured route objects. See routeFactory()
+		routes: [],
+		container: d('body'),
+		// this will hold a COPY of the currenly active route definition
+		PAGE_THIS_PAGE: {},
+		PAGE_THIS: {
+			get container() {
+				return obj.container
+			},
+			get page() {
+				return obj.PAGE_THIS_PAGE
+			},
+			app: {}
 
-// holds DOM object for the element whose contents will get 
-// cleared with DOM().empty() on navigate()
-let container = d('body')
+		},
+		settings: {
+			navigateOnNotMatched: false,
+		},
+		eventsListeners: {}
+	}
 
-// will be bound to page functions.
-const PAGE_THIS_PAGE = {}
-const PAGE_THIS = {
-	get container () { return container },
-	get page () { return PAGE_THIS_PAGE }
-}
+	// glb will be bound to each page setup function
+	obj.hooks.setThis = (gbl) => {
+		obj.PAGE_THIS.app = gbl
+		return obj.hooks
+	}
 
-// glb will be bound to each page setup function
-export const setThis = (gbl) => {
-	PAGE_THIS.app = gbl
-	return hooks
-}
+	obj.hooks.setContainer = (_content) => {
+		const cont = d(_content)
+		if (!cont.exists || !cont.isAppended) throw 'container must exist'
+		obj.container = cont
+		return obj.hooks
+	}
 
-export const setContainer = (_content) => {
-	const cont = d(_content)
-	if (!cont.exists || !cont.isAppended) throw 'container must exist'
-	container = cont
-	return hooks
-}
-
-export const setRoute = (_routes) => {
-	u.makeSureItsAnArray(_routes).forEach((obj) => {
-		routes.push(routeFactory(obj))
-	})
-}
-
-export const navigate = async (path, state = {}) => {
-
-	if (!path) path = window.location.pathname
-	if (path.substr(0, 1) !== '/') path = `/${path}`
-	
-	try {
-
-		// check for anything that wants to prevent navigation
-		const evtResp = (await e.pub({ topic: 'p/willnavigate' })).reduce((a, c) => a + c, 0)
-		if (evtResp & CONST.PREVENT_NAVIGATION) {
-			console.warn('Navigation prevented', evtResp[i])
-			return
-		}
-
-		// tidy
-		container.empty().scrollTop(0)
-
-		// figure out the new path...
-		const pathArr = pathToArray(path)
-		let found = {}
-		let args = {}
-		for (let idx in routes) {
-			const r = routes[idx]
-			if (path === r.url || r.rx.test(path)) {
-				for (let i = 0; i < u.sizeOf(r.args); i++) {
-					const arg = parseArg(
-						pathArr[r.args[i].idx],
-						r.args[i].type
-					)
-					args[r.args[i].name] = arg
-				}
-				found = r
-			}
-		}
-
-		// If we've got a filepath we need to load an extra script
-		if (u.isString(found.filepath)) {
-			const script = await d.script(found.filepath)
-			if (script.status !== 'ok'){
-				errorPage({
-					code: 404,
-					msg: `Unable to load route [${path}]`
-				})
-				return
-			}
-
-			if (u.isString(found.fn)) {
-				if (!u.isFunction(window[found.fn])) {
-					throw `Error loading route : ${u.makeSureItsAnArray(found.path).join('/')} : [${found.fn}()]`
-				}
-				found.fn = window[found.fn]
-				found.filepath = undefined
-			}
-		}
-
-		// not found a function? that'll be a paddlin`
-		if (!u.isFunction(found.fn)) {
-			errorPage({
-				code: 404,
-				msg: `route not found [${path}]`,
-				e: e,
-			})
-			return
-		}
-
-		history.pushState(state, null, path)
-		
-
-		found.visits++
-		if (found.name) Object.assign(PAGE_THIS_PAGE, found)
-
-		await found.fn.bind(PAGE_THIS)(Object.assign({}, found.dfltArg, args))
-
-		e.pub({ topic: 'p/navigate/done' })
-
-	} catch (e) {
-		errorPage({
-			code: 500,
-			msg: `D\'oh!`,
-			e: e,
+	obj.hooks.setRoute = (_routes) => {
+		u.makeSureItsAnArray(_routes).forEach((def) => {
+			obj.routes.push(routeFactory(def))
 		})
 	}
 
-	return hooks
-}
+	obj.hooks.setNavigateOnNotMatched = (val) => obj.settings.navigateOnNotMatched = !!val
 
+	obj.hooks.navigate = (path = false, state = false) => navigate(obj, path, state)
 
-e.sub({ topic: 'p/go', fn:  navigate })
+	obj.eventsListeners.click = (evt) => {
+		if (evt.target.tagName !== 'A') return
+		if (evt.target.host !== window.location.host) return // Goodby...
+		evt.preventDefault()
+		obj.hooks.navigate(evt.target.pathname)
+	}
 
-window.addEventListener('popstate', (evt) => navigate(window.location.pathname, evt.state))
+	obj.eventsListeners.popstate = (evt) => {
+		console.log('popstate', evt.state)
+		obj.hooks.navigate(evt.state.path || window.location.pathname, evt.state)
+	}
 
-document.addEventListener('click', (evt) => {
-	if (evt.target.tagName !== 'A') return
-	if (evt.target.host !== window.location.host) return // Goodby...
-	evt.preventDefault()
-	navigate(evt.target.pathname)
-})
+	window.addEventListener('popstate', obj.eventsListeners.popstate)
 
-export default Object.assign(hooks, {
-	CONST,
-	navigate,
-	setContainer,
-	setRoute,
-	setThis,
-})
+	window.addEventListener('click', obj.eventsListeners.click)
+
+	const errorPage = function () {
+		console.warn(this.page.name)
+	}
+
+	obj.hooks.setRoute([
+		{ name: '404', url: '404', fn: errorPage },
+		{ name: '500', url: '500', fn: errorPage },
+	])
+
+	return obj.hooks
+})()
+
+export default p

@@ -5,32 +5,37 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import p from './page'
+import { p } from './page'
 
 d([
 	{ h1: 'Title here'},
-	{ div: [], id: 'cont'}
+	{ div: [
+		{ a: 'Home', name: 'Home', href: '/' },
+		d.br(),
+		{ a: 'Page 2', name: 'Page 2', href: '/page2/qwerty/123' },
+		d.br(),
+		{ a: 'Page 3', name: 'Page 3', href: '/page3/123/456' },
+		d.br(),
+		{ a: 'Page 4', name: 'Page 4', href: '/page4/arg1/srg2' },
+		d.br(),
+		{ a: 'Fake Route', name: 'No real', href: '/notreal/arg1/srg2' },
+	]},
+	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
 ]).appendTo('body')
-
-p.setContainer('#cont')
-window.p = p
-
 
 const app = {
 	my: 'object'
 }
 
+
 p.setThis(app)
+p.setContainer('#cont1')
 
 const pageFactory = (title) => function (...args) {
 	d([
 		{
 			div: `${title} : ${args[0].arg1} : ${args[0].arg2} : ${this.page.visits}`
 		},
-		{ a: 'Home', name: 'Home', href: '/' },
-		{ a: 'Page 2', name: 'Page 2', href: '/page2/qwerty/123' },
-		{ a: 'Page 3', name: 'Page 3', href: '/page3/123/456' },
-		{ a: 'Page 4', name: 'Page 4', href: '/page4/aserty/ytresa' },
 	]).appendTo(this.container)
 }
  
@@ -42,3 +47,4 @@ p.setRoute([
 ])
 
 p.navigate()
+

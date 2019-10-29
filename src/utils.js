@@ -19,7 +19,7 @@ export const parseType = (arg, type) => {
 export const parseArg = (arg, type) => {
 	switch(type){
 		case 'int': return parseInt(arg)
-		case 'num': Number(arg)
+		case 'num': return Number(arg)
 		case 'bool': return String(arg).toLowerCase() === 'false' ? false : !!arg
 		default: return String(arg)
 	}

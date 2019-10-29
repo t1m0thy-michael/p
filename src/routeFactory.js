@@ -1,6 +1,8 @@
+import { makeID } from '@t1m0thy_michael/u'
+
 import regx from './regex'
 import {
-	pathToArray,
+	pathToArray
 } from './utils'
 
 // Create route objects from definition
@@ -32,7 +34,7 @@ export const routeFactory = (obj) => {
 		opts: obj.opts || {},
 		filepath: obj.filepath || null,
 		fn: obj.fn,
-		name: obj.name || u.makeID(),
+		name: obj.name || makeID(),
 		path: path,
 		rx: new RegExp(`^${rx}$`),
 		url: obj.url,
