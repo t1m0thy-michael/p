@@ -1,12 +1,7 @@
-import { makeID } from '@t1m0thy_michael/u'
-
+import { pathToArray } from './utils'
 import regx from './regex'
-import {
-	pathToArray
-} from './utils'
 
-// Create route objects from definition
-export const routeFactory = (obj) => {
+export const createRoute = (obj) => {
 	let rx = ''
 	let args = []
 	let path = []
@@ -43,4 +38,4 @@ export const routeFactory = (obj) => {
 	}
 }
 
-export default routeFactory
+export default createRoute

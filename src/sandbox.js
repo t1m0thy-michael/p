@@ -5,7 +5,7 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import { p } from './page'
+import p from './p'
 
 d([
 	{ h1: 'Title here'},
@@ -32,6 +32,7 @@ p.setThis(app)
 p.setContainer('#cont1')
 
 const pageFactory = (title) => function (...args) {
+	console.log(`load ${title}`)
 	d([
 		{
 			div: `${title} : ${args[0].arg1} : ${args[0].arg2} : ${this.page.visits}`
