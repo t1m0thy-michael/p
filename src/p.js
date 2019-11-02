@@ -23,10 +23,11 @@ let afterNavigate = () => {}
 
 const setRoute = (arr) => {
 	u.makeSureItsAnArray(arr).forEach((def) => {
-		const rut = createRoute(def)
-		routes[rut.url] = rut
+		const r = createRoute(def)
+		routes[r.url] = r
 	})
 }
+
 // set default routes
 setRoute(errorRoutes)
 
@@ -55,14 +56,14 @@ const navigate = async (path, state = false) => {
 	// user defined. May prevent navigation
 	if (await beforeNavigate() === CONST.PREVENT_NAVIGATION) return
 	
+	// save current state
+	history.replaceState(THIS.page.state, null, null)
+
 	// make sure path makes sense
 	path = getPath(path)
 	
 	// find appropriate route
 	let r = await getRoute(routes, path)
-
-	// save current state
-	history.replaceState(THIS.page.state, null, null)
 
 	// bugger.
 	if (!r) r = await getRoute(routes, '/404')
