@@ -23,20 +23,61 @@ d([
 	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
 ]).appendTo('body')
 
-const app = {
-	my: 'object'
-}
-
-
-p.setThis(app)
 p.setContainer('#cont1')
 
+
+
 const pageFactory = (title) => function (...args) {
-	console.log(`load ${title}`)
+
+	if (!this.page.state.name) this.page.state.name = this.page.name
+
+	const SELF = this
+
+	const state = dom({
+		div: [
+			'APP state: ',
+			SELF.state.clickCount || '',
+		],
+		sub: {
+			topic: 'testClick',
+			fn: function () {
+				console.log(SELF.state, this, 'hello?')
+				this.innerHTML(`APP state: ${SELF.state.clickCount}`)
+			}
+		}
+	})
+
+	const pageState = dom({
+		div: [
+			'PAGE state: ',
+			SELF.page.state.clickCount || '',
+		],
+		sub: {
+			topic: 'testClick',
+			fn: function () {
+				console.log(SELF.state, this, 'hello?')
+				this.innerHTML(`PAGE state: ${SELF.page.state.clickCount}`)
+			}
+		}
+	})
+
 	d([
+		{ div: title },
+		state,
+		pageState,
 		{
-			div: `${title} : ${args[0].arg1} : ${args[0].arg2} : ${this.page.visits}`
-		},
+			span: 'click me',
+			on: {
+				event: 'click',
+				fn: () => {
+					this.state.clickCount = this.page.name
+					this.page.state.clickCount = this.page.name
+					console.log(this.page.state)
+
+				},
+				topic: 'testClick'
+			}
+		}
 	]).appendTo(this.container)
 }
  
@@ -46,6 +87,9 @@ p.setRoute([
 	{ name: 'page 3', url: 'page3/::arg1[int]/::arg2[int]', fn: pageFactory('page 3'), arg: {a: 3, b: 4} },
 	{ name: 'page 4', url: 'page4/::arg1[str]/::arg2[str]', fn: pageFactory('page 4'), arg: {a: 5, b: 6} },
 ])
+
+p.setBeforeNavigate(function (){ console.log('before navigate', window.location.pathname, history.state, this.page.state) })
+p.setAfterNavigate(function (){ console.log('after navigate', window.location.pathname, history.state, this.page.state) })
 
 p.navigate()
 

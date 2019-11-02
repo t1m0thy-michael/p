@@ -25,16 +25,15 @@ export const createRoute = (obj) => {
 		})
 
 	return {
-		args: args || [],
-		opts: obj.opts || {},
-		filepath: obj.filepath || null,
-		fn: obj.fn,
+		args: args || [],								// description of expected arguments
+		defaultArguments: obj.defaultArguments || {},  	// kv pair default agruments
+		filepath: obj.filepath || null, 				// string. src path of required external script
+		fn: obj.fn,										// fn or name of fn on global object from 'filepath' sctipt
+		len: args.length + path.length,					
 		name: obj.name || makeID(),
-		path: path,
+		pathArr: path,
 		rx: new RegExp(`^${rx}$`),
-		url: obj.url,
-		len: args.length + path.length,
-		visits: 0
+		url: obj.url, 									// url DEFINITION. path with arg type placeholders
 	}
 }
 

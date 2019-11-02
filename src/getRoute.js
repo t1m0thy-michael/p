@@ -1,11 +1,15 @@
 import u from '@t1m0thy_michael/u'
 
 import {
-	parseArg,
+	parseType,
 	pathToArray,
 	script,
 } from './utils'
 
+/*
+	returns route object matching the given path
+	async - route may require loading of another script
+*/
 export const getRoute = async (routes, path) => {
 	const pathArr = pathToArray(path)
 	let found = {}
@@ -14,7 +18,7 @@ export const getRoute = async (routes, path) => {
 		const r = routes[idx]
 		if (path === r.url || r.rx.test(path)) {
 			for (let i = 0; i < u.sizeOf(r.args); i++) {
-				const arg = parseArg(
+				const arg = parseType(
 					pathArr[r.args[i].idx],
 					r.args[i].type
 				)
@@ -31,7 +35,7 @@ export const getRoute = async (routes, path) => {
 	// need to load additional script js file
 	if (u.isString(found.filepath)) {
 		const s = await script(found.filepath)	
-		// 404 - additional missing
+		// 404 - additional script not found
 		if (s.status !== 'ok' || !isFunction(window[found.fn])) return false
 		found.fn = window[found.fn]
 	}
