@@ -62,11 +62,11 @@ const pageFactory = (title) => function (...args) {
 	})
 
 	d([
-		{ div: title },
+		{ h3: title },
 		state,
 		pageState,
 		{
-			span: 'click me',
+			button: 'click me',
 			on: {
 				event: 'click',
 				fn: () => {
