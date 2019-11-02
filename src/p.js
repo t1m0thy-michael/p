@@ -4,6 +4,7 @@ import u from '@t1m0thy_michael/u'
 import createRoute from './createRoute'
 import getRoute from './getRoute'
 import CONST from './constants'
+import errorRoutes from './error'
 		
 const THIS = {
 	app: {},
@@ -26,6 +27,8 @@ const setRoute = (arr) => {
 		routes[rut.url] = rut
 	})
 }
+// set default routes
+setRoute(errorRoutes)
 
 const setContainer = (selector) => {
 	const cont = d(selector)
@@ -41,17 +44,6 @@ const setAfterNavigate = (fn) => afterNavigate = fn.bind(THIS)
 
 const setBeforeNavigate = (fn) => beforeNavigate = fn.bind(THIS)
 
-const maintainHistory = (r, path, state = false) => {
-	// save current state
-	history.replaceState(THIS.page.state, null, null)
-	// update state for new route
-	if (!state) {
-		history.pushState({}, r.name, path)
-	} else {
-		history.replaceState(state, r.name, path)
-	}
-}
-
 const getPath = (path = '') => {
 	if (!path) path = window.location.pathname
 	if (String(path).substr(0, 1) !== '/') path = `/${path}`
@@ -62,21 +54,21 @@ const navigate = async (path, state = false) => {
 
 	// user defined. May prevent navigation
 	if (await beforeNavigate() === CONST.PREVENT_NAVIGATION) return
-
-	// clear container
-	THIS.container.empty().scrollTop(0)
 	
 	// make sure path makes sense
 	path = getPath(path)
 	
 	// find appropriate route
-	const r = await getRoute(routes, path)
-			
+	let r = await getRoute(routes, path)
+
 	// save current state
 	history.replaceState(THIS.page.state, null, null)
 
 	// bugger.
-	if (!r) throw new Error(404)
+	if (!r) r = await getRoute(routes, '/404')
+
+	// clear container
+	if (r.clearBefore) THIS.container.empty().scrollTop(0)
 
 	// update THIS.page with new route information
 	THIS.page = { 

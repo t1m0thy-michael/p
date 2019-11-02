@@ -82,10 +82,10 @@ const pageFactory = (title) => function (...args) {
 }
  
 p.setRoute([
-	{ name: 'home', url: '/', fn: pageFactory('home'), arg: {a: 1, b: 2} },
-	{ name: 'page 2', url: 'page2/::arg1[str]/::arg2[int]', fn: pageFactory('page 2'), arg: {a: 1, b: 2} },
-	{ name: 'page 3', url: 'page3/::arg1[int]/::arg2[int]', fn: pageFactory('page 3'), arg: {a: 3, b: 4} },
-	{ name: 'page 4', url: 'page4/::arg1[str]/::arg2[str]', fn: pageFactory('page 4'), arg: {a: 5, b: 6} },
+	{ name: 'home', url: '/', fn: pageFactory('home') },
+	{ name: 'page 2', url: 'page2/::arg1[str]/::arg2[int]', fn: pageFactory('page 2') },
+	{ name: 'page 3', url: 'page3/::arg1[int]/::arg2[int]', fn: pageFactory('page 3') },
+	{ name: 'page 4', url: 'page4/::arg1[str]/::arg2[str]', fn: pageFactory('page 4') },
 ])
 
 p.setBeforeNavigate(function (){ console.log('before navigate', window.location.pathname, history.state, this.page.state) })
