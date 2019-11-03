@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
 	entry: {
-		index: './src/page.js',
+		index: './src/p.js',
 	},
 	output: {
 		path: path.resolve('./'),
