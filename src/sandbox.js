@@ -33,7 +33,7 @@ const pageFactory = (title) => function (...args) {
 
 	const SELF = this
 
-	const state = dom({
+	const state = d({
 		div: [
 			'APP state: ',
 			SELF.state.clickCount || '',
@@ -47,7 +47,7 @@ const pageFactory = (title) => function (...args) {
 		}
 	})
 
-	const pageState = dom({
+	const pageState = d({
 		div: [
 			'PAGE state: ',
 			SELF.page.state.clickCount || '',

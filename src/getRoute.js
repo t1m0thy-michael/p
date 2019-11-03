@@ -36,7 +36,7 @@ export const getRoute = async (routes, path) => {
 	if (u.isString(found.filepath)) {
 		const s = await script(found.filepath)	
 		// 404 - additional script not found
-		if (s.status !== 'ok' || !isFunction(window[found.fn])) return false
+		if (s.status !== 'ok' || !u.isFunction(window[found.fn])) return false
 		found.fn = window[found.fn]
 	}
 
