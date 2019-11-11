@@ -1,4 +1,3 @@
-// import u from '@t1m0thy_michael/u'
 import e from '@t1m0thy_michael/e'
 window.e = e
 import d from '@t1m0thy_michael/d'
@@ -31,18 +30,18 @@ const pageFactory = (title) => function (...args) {
 
 	if (!this.page.state.name) this.page.state.name = this.page.name
 
-	const SELF = this
+	const APP = this
 
 	const state = d({
 		div: [
 			'APP state: ',
-			SELF.state.clickCount || '',
+			APP.state.clickCount || '',
 		],
 		sub: {
 			topic: 'testClick',
 			fn: function () {
-				console.log(SELF.state, this, 'hello?')
-				this.innerHTML(`APP state: ${SELF.state.clickCount}`)
+				console.log(APP.state, this, 'hello?')
+				this.innerHTML(`APP state: ${APP.state.clickCount}`)
 			}
 		}
 	})
@@ -50,13 +49,13 @@ const pageFactory = (title) => function (...args) {
 	const pageState = d({
 		div: [
 			'PAGE state: ',
-			SELF.page.state.clickCount || '',
+			APP.page.state.clickCount || '',
 		],
 		sub: {
 			topic: 'testClick',
 			fn: function () {
-				console.log(SELF.state, this, 'hello?')
-				this.innerHTML(`PAGE state: ${SELF.page.state.clickCount}`)
+				console.log(APP.state, this, 'hello?')
+				this.innerHTML(`PAGE state: ${APP.page.state.clickCount}`)
 			}
 		}
 	})
@@ -82,14 +81,40 @@ const pageFactory = (title) => function (...args) {
 }
  
 p.setRoute([
-	{ name: 'home', url: '/', fn: pageFactory('home') },
-	{ name: 'page 2', url: 'page2/::arg1[str]/::arg2[int]', fn: pageFactory('page 2') },
-	{ name: 'page 3', url: 'page3/::arg1[int]/::arg2[int]', fn: pageFactory('page 3') },
-	{ name: 'page 4', url: 'page4/::arg1[str]/::arg2[str]', fn: pageFactory('page 4') },
+	{
+		name: 'home',
+		url: '/',
+		fn: pageFactory('home'),
+		onLeave: () => alert('bye, bye home page')
+	},
+	{
+		name: 'page 2',
+		url: 'page2/::arg1[str]/::arg2[int]',
+		fn: pageFactory('page 2'),
+		onLeave: () => alert('bye, bye 2')
+	},
+	{
+		name: 'page 3',
+		url: 'page3/::arg1[int]/::arg2[int]',
+		fn: pageFactory('page 3'),
+		onLeave: function () {
+			console.log(this)
+		}
+	},
+	{
+		name: 'page 4',
+		url: 'page4/::arg1[str]/::arg2[str]',
+		fn: pageFactory('page 4'),
+		onLeave: () => alert('bye, bye 4')
+	},
 ])
 
 p.setBeforeNavigate(function (){ console.log('before navigate', window.location.pathname, history.state, this.page.state) })
 p.setAfterNavigate(function (){ console.log('after navigate', window.location.pathname, history.state, this.page.state) })
 
 p.navigate()
+
+p.setOn404(function (path) {
+	window.location.href = path
+})
 

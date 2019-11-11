@@ -5,22 +5,27 @@ import createRoute from './createRoute'
 import getRoute from './getRoute'
 import CONST from './constants'
 import errorRoutes from './error'
-		
+
 const THIS = {
 	app: {},
 	const: CONST,
 	container: d('body'),
 	page: {
-		state: {}
+		args: {},
+		name: '',
+		route: {},
+		state: {},
 	},
 	state: {},
 }
 
 const routes = {}
 
-let beforeNavigate = () => {}
-let afterNavigate = () => {}
-
+const on = {
+	beforeNavigate: () => {},
+	afterNavigate: () => {},
+	on404: () => { console.error(404) },
+}
 const setRoute = (arr) => {
 	u.makeSureItsAnArray(arr).forEach((def) => {
 		const r = createRoute(def)
@@ -41,9 +46,10 @@ const setApp = (gbl) =>  THIS.app = gbl || {}
 
 const setState = (gbl) => THIS.state = gbl || {}
 
-const setAfterNavigate = (fn) => afterNavigate = fn.bind(THIS)
-
-const setBeforeNavigate = (fn) => beforeNavigate = fn.bind(THIS)
+const setAction = (key) => (fn) => on[key] = fn.bind(THIS)
+const setAfterNavigate = setAction('afterNavigate')
+const setBeforeNavigate = setAction('beforeNavigate')
+const setOn404 = setAction('on404')
 
 const getPath = (path = '') => {
 	if (!path) path = window.location.pathname
@@ -53,9 +59,12 @@ const getPath = (path = '') => {
 
 const navigate = async (path, state = false) => {
 
-	// user defined. May prevent navigation
-	if (await beforeNavigate() === CONST.PREVENT_NAVIGATION) return
-	
+	// anything to do before we leave??
+	const onLeave = u.get(THIS, 'page.route.onLeave')
+	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
+
+	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
+
 	// save current state
 	history.replaceState(THIS.page.state, null, null)
 
@@ -66,14 +75,21 @@ const navigate = async (path, state = false) => {
 	let r = await getRoute(routes, path)
 
 	// bugger.
-	if (!r) r = await getRoute(routes, '/404')
+	if (!r) {
+		if (path !== window.location.pathname) await on.on404(path)
+		r = await getRoute(routes, '/404')
+	}
 
-	// clear container
+	// clear container?
 	if (r.clearBefore) THIS.container.empty().scrollTop(0)
+
+	const pageArgs = Object.assign({}, r.defaultArguments, r.arguments)
 
 	// update THIS.page with new route information
 	THIS.page = { 
+		args: pageArgs  || {},
 		name: r.name,
+		route: r,
 		state: state || {},
 	}
 
@@ -85,10 +101,9 @@ const navigate = async (path, state = false) => {
 	}
 
 	// bind THIS, and call with defaults/args
-	await r.fn.bind(THIS)(Object.assign({}, r.defaultArguments, r.arguments))
+	await r.fn.bind(THIS)(pageArgs)
 
-	// user defined
-	await afterNavigate()
+	await on.afterNavigate()
 }
 
 const eventsListeners = {}
@@ -116,4 +131,5 @@ export default {
 	setContainer,
 	setRoute,
 	setState,
+	setOn404,
 }
