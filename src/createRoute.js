@@ -7,6 +7,7 @@ export const createRoute = ({
 	name,
 	clearBefore = true,
 	filepath = null,
+	onLeave = () => {}
 }) => {
 	let rx = ''
 	let args = []
@@ -39,7 +40,8 @@ export const createRoute = ({
 		pathArr: path,
 		rx: new RegExp(`^${rx}$`),
 		url: url, 						// url DEFINITION. path with arg type placeholders
-		clearBefore: clearBefore
+		clearBefore: clearBefore,
+		onLeave: onLeave,
 	}
 }
 
