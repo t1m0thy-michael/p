@@ -40,7 +40,8 @@ export const getRoute = async (routes, path) => {
 		found.fn = window[found.fn]
 	}
 
-	return found
+	// return shallow copy
+	return Object.assign({}, found)
 }
 
 export default getRoute
