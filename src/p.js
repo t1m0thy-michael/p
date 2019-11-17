@@ -80,6 +80,12 @@ const navigate = async (path, state = false) => {
 		r = await getRoute(routes, '/404')
 	}
 
+	// external
+	if (r.external && window.location.pathname !== path) {
+		window.location = path
+		return
+	}
+
 	// clear container?
 	if (r.clearBefore) THIS.container.empty().scrollTop(0)
 

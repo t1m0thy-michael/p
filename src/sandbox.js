@@ -15,9 +15,21 @@ d([
 		d.br(),
 		{ a: 'Page 3', name: 'Page 3', href: '/page3/123/456' },
 		d.br(),
-		{ a: 'Page 4', name: 'Page 4', href: '/page4/arg1/srg2' },
-		d.br(),
-		{ a: 'Fake Route', name: 'No real', href: '/notreal/arg1/srg2' },
+		{
+			a: 'Page 4',
+			name: 'Page 4',
+			href: '/page4/arg1/srg2'
+		},
+		d.br(), {
+			a: 'Fake Route',
+			name: 'No real',
+			href: '/notreal/arg1/srg2'
+		},
+		d.br(), {
+			a: 'external to SPA',
+			name: 'external',
+			href: '/page5'
+		},
 	]},
 	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
 ]).appendTo('body')
@@ -100,12 +112,16 @@ p.setRoute([
 		onLeave: function () {
 			console.log(this)
 		}
-	},
-	{
+	}, {
 		name: 'page 4',
 		url: 'page4/::arg1[str]/::arg2[str]',
 		fn: pageFactory('page 4'),
 		onLeave: () => alert('bye, bye 4')
+	}, {
+		name: 'outside SPA',
+		url: 'page5',
+		fn: pageFactory('page 4'),
+		external: true
 	},
 ])
 

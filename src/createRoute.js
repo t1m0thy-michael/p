@@ -2,12 +2,16 @@ import { pathToArray } from './utils'
 import regx from './regex'
 
 export const createRoute = ({
-	url,
+	// required
 	fn,
 	name,
+	url,
+	// opts
 	clearBefore = true,
+	external = false,
 	filepath = null,
-	onLeave = () => {}
+	// events
+	onLeave = () => {},
 }) => {
 	let rx = ''
 	let args = []
@@ -42,6 +46,7 @@ export const createRoute = ({
 		url: url, 						// url DEFINITION. path with arg type placeholders
 		clearBefore: clearBefore,
 		onLeave: onLeave,
+		external: external
 	}
 }
 
