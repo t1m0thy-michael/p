@@ -22,18 +22,27 @@ export const createRoute = ({
 			if (slug && slug.substr(0, 2) === '::') {
 				const name = (slug.match(regx.arg.name) || ['', ''])[1]
 				const type = (slug.match(regx.arg.type) || ['', ''])[1]
-				rx += `\\/${regx.types[type]}`
+				rx += `(\\/${regx.types[type]})`
+				
+				if (slug.substr(2,1) === '?'){
+					rx += '?'
+				}
+
+				console.log(slug, rx)
+
 				args.push({
 					name,
 					type,
 					idx
 				})
-				// slug is path
 			} else {
+				// slug is path
 				path.push(slug)
 				rx += `\\/${slug}`
 			}
 		})
+
+		console.log(rx)
 
 	return {
 		args: args,						// description of expected arguments

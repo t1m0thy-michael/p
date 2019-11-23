@@ -30,6 +30,16 @@ d([
 			name: 'external',
 			href: '/page5'
 		},
+		d.br(), {
+			a: 'page6a',
+			name: 'page 6 a',
+			href: '/page6/str/123'
+		},
+		d.br(), {
+			a: 'page6b',
+			name: 'page 6 b',
+			href: '/page6/str/123/test'
+		},
 	]},
 	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
 ]).appendTo('body')
@@ -43,6 +53,13 @@ const pageFactory = (title) => function (...args) {
 	if (!this.page.state.name) this.page.state.name = this.page.name
 
 	const APP = this
+
+	const ag = d({
+		div: [
+			'Args',
+			JSON.stringify(args)
+		]
+	})
 
 	const state = d({
 		div: [
@@ -74,6 +91,7 @@ const pageFactory = (title) => function (...args) {
 
 	d([
 		{ h3: title },
+		ag,
 		state,
 		pageState,
 		{
@@ -122,6 +140,10 @@ p.setRoute([
 		url: 'page5',
 		fn: pageFactory('page 4'),
 		external: true
+	}, {
+		name: 'optional args',
+		url: 'page6/::arg1[str]/::opt1[int]/::?opt2[str]',
+		fn: pageFactory('page 6'),
 	},
 ])
 
