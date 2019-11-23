@@ -115,15 +115,13 @@ p.setRoute([
 		name: 'home',
 		url: '/',
 		fn: pageFactory('home'),
-		onLeave: () => alert('bye, bye home page')
-	},
-	{
+		// onLeave: () => alert('bye, bye home page')
+	},{
 		name: 'page 2',
 		url: 'page2/::arg1[str]/::arg2[int]',
 		fn: pageFactory('page 2'),
-		onLeave: () => alert('bye, bye 2')
-	},
-	{
+		// onLeave: () => alert('bye, bye 2')
+	}, {
 		name: 'page 3',
 		url: 'page3/::arg1[int]/::arg2[int]',
 		fn: pageFactory('page 3'),
@@ -134,7 +132,7 @@ p.setRoute([
 		name: 'page 4',
 		url: 'page4/::arg1[str]/::arg2[str]',
 		fn: pageFactory('page 4'),
-		onLeave: () => alert('bye, bye 4')
+		// onLeave: () => alert('bye, bye 4')
 	}, {
 		name: 'outside SPA',
 		url: 'page5',

@@ -62,23 +62,23 @@ const navigate = async (path, state = false) => {
 	// anything to do before we leave??
 	const onLeave = u.get(THIS, 'page.route.onLeave')
 	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
-
-	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
-
-	// save current state
-	history.replaceState(THIS.page.state, null, null)
-
+	
 	// make sure path makes sense
 	path = getPath(path)
 	
 	// find appropriate route
 	let r = await getRoute(routes, path)
-
+	
 	// bugger.
 	if (!r) {
 		if (path !== window.location.pathname) await on.on404(path)
 		r = await getRoute(routes, '/404')
 	}
+
+	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
+
+	// save current state
+	history.replaceState(THIS.page.state, null, null)
 
 	// external
 	if (r.external && window.location.pathname !== path) {
