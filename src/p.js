@@ -6,6 +6,8 @@ import getRoute from './getRoute'
 import CONST from './constants'
 import errorRoutes from './error'
 
+export * from './gblFnStore'
+
 const THIS = {
 	app: {},
 	const: CONST,

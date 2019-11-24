@@ -6,6 +6,8 @@ import {
 	script,
 } from './utils'
 
+import { getPageFn } from './gblFnStore'
+
 /*
 	returns route object matching the given path
 	async - route may require loading of another script
@@ -36,8 +38,10 @@ export const getRoute = async (routes, path) => {
 	if (u.isString(found.filepath)) {
 		const s = await script(found.filepath)	
 		// 404 - additional script not found
-		if (s.status !== 'ok' || !u.isFunction(window[found.fn])) return false
-		found.fn = window[found.fn]
+		const fn = getPageFn(found.fn)
+		if (s.status !== 'ok' || !u.isFunction(fn)) return false
+		found.fn = fn
+		delete found.filepath
 	}
 
 	// return shallow copy
