@@ -60,10 +60,6 @@ const getPath = (path = '') => {
 }
 
 const navigate = async (path, state = false) => {
-
-	// anything to do before we leave??
-	const onLeave = u.get(THIS, 'page.route.onLeave')
-	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 	
 	// make sure path makes sense
 	path = getPath(path)
@@ -78,6 +74,10 @@ const navigate = async (path, state = false) => {
 	}
 
 	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
+
+	// anything to do before we leave??
+	const onLeave = u.get(THIS, 'page.route.onLeave')
+	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 
 	// save current state
 	history.replaceState(THIS.page.state, null, null)
