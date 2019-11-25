@@ -4,7 +4,7 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import p from './p'
+import p from './index'
 
 d([
 	{ h1: 'Title here'},
@@ -39,6 +39,21 @@ d([
 			a: 'page6b',
 			name: 'page 6 b',
 			href: '/page6/str/123/test'
+		},
+		d.br(), {
+			a: 'any1',
+			name: 'page 6 b',
+			href: '/any/blahsadas'
+		},
+		d.br(), {
+			a: 'any2',
+			name: 'page 6 b',
+			href: '/any/blahsadas/wf423f43/123123'
+		},
+		d.br(), {
+			a: 'any3',
+			name: 'page 6 b',
+			href: '/any'
 		},
 	]},
 	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
@@ -142,6 +157,14 @@ p.setRoute([
 		name: 'optional args',
 		url: 'page6/::arg1[str]/::opt1[int]/::?opt2[str]',
 		fn: pageFactory('page 6'),
+	}, {
+		name: 'optional args',
+		url: 'any/',
+		fn: () => console.log('any'),
+	}, {
+		name: 'optional args',
+		url: 'any/*',
+		external: true
 	},
 ])
 

@@ -18,8 +18,9 @@ export const createRoute = ({
 	let path = []
 
 	pathToArray(url).forEach((slug, idx) => {
+		if (!slug) return 
 		// slug is argument
-		if (slug && slug.substr(0, 2) === '::') {
+		if (slug.substr(0, 2) === '::') {
 			const name = (slug.match(regx.arg.name) || ['', ''])[1]
 			const type = (slug.match(regx.arg.type) || ['', ''])[1]
 			rx += `(\\/${regx.types[type]})`
@@ -31,7 +32,10 @@ export const createRoute = ({
 				type,
 				idx
 			})
-			
+
+		} else if (slug.substr(0,1) === '*') {
+			rx += '\\/.+'
+
 		} else {
 			// slug is path
 			path.push(slug)
