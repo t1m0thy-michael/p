@@ -2,34 +2,42 @@ import { pathToArray } from './utils'
 import regx from './regex'
 
 export const createRoute = ({
-	url,
+	// required
 	fn,
 	name,
+	url,
+	// opts
 	clearBefore = true,
+	external = false,
 	filepath = null,
-	onLeave = () => {}
+	// events
+	onLeave = () => {},
 }) => {
 	let rx = ''
 	let args = []
 	let path = []
-	pathToArray(url)
-		.forEach((slug, idx) => {
-			// slug is argument
-			if (slug && slug.substr(0, 2) === '::') {
-				const name = (slug.match(regx.arg.name) || ['', ''])[1]
-				const type = (slug.match(regx.arg.type) || ['', ''])[1]
-				rx += `\\/${regx.types[type]}`
-				args.push({
-					name,
-					type,
-					idx
-				})
-				// slug is path
-			} else {
-				path.push(slug)
-				rx += `\\/${slug}`
-			}
-		})
+
+	pathToArray(url).forEach((slug, idx) => {
+		// slug is argument
+		if (slug && slug.substr(0, 2) === '::') {
+			const name = (slug.match(regx.arg.name) || ['', ''])[1]
+			const type = (slug.match(regx.arg.type) || ['', ''])[1]
+			rx += `(\\/${regx.types[type]})`
+			
+			if (slug.substr(2,1) === '?') rx += '?'
+
+			args.push({
+				name,
+				type,
+				idx
+			})
+			
+		} else {
+			// slug is path
+			path.push(slug)
+			rx += `\\/${slug}`
+		}
+	})
 
 	return {
 		args: args,						// description of expected arguments
@@ -42,6 +50,7 @@ export const createRoute = ({
 		url: url, 						// url DEFINITION. path with arg type placeholders
 		clearBefore: clearBefore,
 		onLeave: onLeave,
+		external: external
 	}
 }
 
