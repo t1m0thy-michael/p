@@ -22,7 +22,7 @@ d([
 		},
 		d.br(), {
 			a: 'Fake Route',
-			name: 'No real',
+			name: 'Not real',
 			href: '/notreal/arg1/srg2'
 		},
 		d.br(), {
@@ -81,8 +81,8 @@ const pageFactory = (title) => function (...args) {
 			'APP state: ',
 			APP.state.clickCount || '',
 		],
-		sub: {
-			topic: 'testClick',
+		on: {
+			event: 'testClick',
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`APP state: ${APP.state.clickCount}`)
@@ -95,8 +95,8 @@ const pageFactory = (title) => function (...args) {
 			'PAGE state: ',
 			APP.page.state.clickCount || '',
 		],
-		sub: {
-			topic: 'testClick',
+		on: {
+			event: 'testClick',
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`PAGE state: ${APP.page.state.clickCount}`)
@@ -140,18 +140,16 @@ p.setRoute([
 		name: 'page 3',
 		url: 'page3/::arg1[int]/::arg2[int]',
 		fn: pageFactory('page 3'),
-		onLeave: function () {
-			console.log(this)
-		}
+		// onLeave: function () {
+		// 	console.log(this)
+		// }
 	}, {
 		name: 'page 4',
 		url: 'page4/::arg1[str]/::arg2[str]',
 		fn: pageFactory('page 4'),
-		// onLeave: () => alert('bye, bye 4')
 	}, {
 		name: 'outside SPA',
 		url: 'page5',
-		fn: pageFactory('page 4'),
 		external: true
 	}, {
 		name: 'optional args',
@@ -160,11 +158,11 @@ p.setRoute([
 	}, {
 		name: 'optional args',
 		url: 'any/',
-		fn: () => console.log('any'),
+		fn: pageFactory('optional args any/')
 	}, {
 		name: 'optional args',
 		url: 'any/*',
-		external: true
+		fn: pageFactory('optional args any/*'),
 	},
 ])
 
@@ -173,7 +171,7 @@ p.setAfterNavigate(function (){ console.log('after navigate', window.location.pa
 
 p.navigate()
 
-p.setOn404(function (path) {
-	window.location.href = path
-})
+// p.setOn404(function (path) {
+// 	window.location.href = path
+// })
 

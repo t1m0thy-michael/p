@@ -7,7 +7,6 @@ export const errorPageFactory = () => function (args) {
 	]).appendTo(this.container)
 }
 
-
 export const errorRoutes = [
 	{
 		name: 'It\'s all gone Pete Tong',
