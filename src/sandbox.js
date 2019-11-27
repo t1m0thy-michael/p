@@ -4,7 +4,7 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import p from './p'
+import p from './index'
 
 d([
 	{ h1: 'Title here'},
@@ -22,7 +22,7 @@ d([
 		},
 		d.br(), {
 			a: 'Fake Route',
-			name: 'No real',
+			name: 'Not real',
 			href: '/notreal/arg1/srg2'
 		},
 		d.br(), {
@@ -39,6 +39,21 @@ d([
 			a: 'page6b',
 			name: 'page 6 b',
 			href: '/page6/str/123/test'
+		},
+		d.br(), {
+			a: 'any1',
+			name: 'page 6 b',
+			href: '/any/blahsadas'
+		},
+		d.br(), {
+			a: 'any2',
+			name: 'page 6 b',
+			href: '/any/blahsadas/wf423f43/123123'
+		},
+		d.br(), {
+			a: 'any3',
+			name: 'page 6 b',
+			href: '/any'
 		},
 	]},
 	{ div: [], id: 'cont1', width: '100%', height: '500px', background: { colour: 'rgb(106, 137, 202)'}},
@@ -66,8 +81,8 @@ const pageFactory = (title) => function (...args) {
 			'APP state: ',
 			APP.state.clickCount || '',
 		],
-		sub: {
-			topic: 'testClick',
+		on: {
+			event: 'testClick',
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`APP state: ${APP.state.clickCount}`)
@@ -80,8 +95,8 @@ const pageFactory = (title) => function (...args) {
 			'PAGE state: ',
 			APP.page.state.clickCount || '',
 		],
-		sub: {
-			topic: 'testClick',
+		on: {
+			event: 'testClick',
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`PAGE state: ${APP.page.state.clickCount}`)
@@ -125,23 +140,29 @@ p.setRoute([
 		name: 'page 3',
 		url: 'page3/::arg1[int]/::arg2[int]',
 		fn: pageFactory('page 3'),
-		onLeave: function () {
-			console.log(this)
-		}
+		// onLeave: function () {
+		// 	console.log(this)
+		// }
 	}, {
 		name: 'page 4',
 		url: 'page4/::arg1[str]/::arg2[str]',
 		fn: pageFactory('page 4'),
-		// onLeave: () => alert('bye, bye 4')
 	}, {
 		name: 'outside SPA',
 		url: 'page5',
-		fn: pageFactory('page 4'),
 		external: true
 	}, {
 		name: 'optional args',
 		url: 'page6/::arg1[str]/::opt1[int]/::?opt2[str]',
 		fn: pageFactory('page 6'),
+	}, {
+		name: 'optional args',
+		url: 'any/',
+		fn: pageFactory('optional args any/')
+	}, {
+		name: 'optional args',
+		url: 'any/*',
+		fn: pageFactory('optional args any/*'),
 	},
 ])
 
@@ -150,7 +171,7 @@ p.setAfterNavigate(function (){ console.log('after navigate', window.location.pa
 
 p.navigate()
 
-p.setOn404(function (path) {
-	window.location.href = path
-})
+// p.setOn404(function (path) {
+// 	window.location.href = path
+// })
 

@@ -23,6 +23,8 @@ const THIS = {
 
 const routes = {}
 
+const getRoutes = () => routes
+
 const on = {
 	beforeNavigate: () => {},
 	afterNavigate: () => {},
@@ -45,6 +47,7 @@ const setContainer = (selector) => {
 }
 
 const setApp = (gbl) =>  THIS.app = gbl || {}
+const getApp = () => THIS
 
 const setState = (gbl) => THIS.state = gbl || {}
 
@@ -60,17 +63,13 @@ const getPath = (path = '') => {
 }
 
 const navigate = async (path, state = false) => {
-
-	// anything to do before we leave??
-	const onLeave = u.get(THIS, 'page.route.onLeave')
-	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 	
 	// make sure path makes sense
 	path = getPath(path)
 	
 	// find appropriate route
 	let r = await getRoute(routes, path)
-	
+
 	// bugger.
 	if (!r) {
 		if (path !== window.location.pathname) await on.on404(path)
@@ -78,6 +77,10 @@ const navigate = async (path, state = false) => {
 	}
 
 	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
+
+	// anything to do before we leave??
+	const onLeave = u.get(THIS, 'page.route.onLeave')
+	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 
 	// save current state
 	history.replaceState(THIS.page.state, null, null)
@@ -109,6 +112,8 @@ const navigate = async (path, state = false) => {
 	}
 
 	// bind THIS, and call with defaults/args
+	if (!u.isFunction(r.fn)) return
+
 	await r.fn.bind(THIS)(pageArgs)
 
 	await on.afterNavigate()
@@ -131,13 +136,22 @@ window.addEventListener('click', eventsListeners.click)
 
 window.addEventListener('popstate', eventsListeners.popstate)
 
-export default {
+const getEventListeners = () => eventsListeners
+
+export const hooks = {
+	getApp,
+	getEventListeners,
+	getRoutes,
 	navigate,
 	setAfterNavigate,
 	setApp,
 	setBeforeNavigate,
 	setContainer,
+	setOn404,
 	setRoute,
 	setState,
-	setOn404,
 }
+
+window.p = window.p || hooks
+
+export default hooks

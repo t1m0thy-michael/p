@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
 	entry: {
-		index: './src/p.js',
+		index: './src/index.js',
 	},
 	output: {
 		path: path.resolve('./'),
@@ -12,7 +12,7 @@ module.exports = {
 		extensions: ['.js', '.ts'],
 		symlinks: false,
 	},
-	devtool: false, //'cheap-module-eval-source-map'/* 'inline-source-map' */,
+	devtool: false,
 	module: {
 		rules: [{
 				test: /\.js$/,
@@ -24,17 +24,6 @@ module.exports = {
 					},
 				}]
 			},
-			// {
-			// 	test: /\.tsx?$/,
-			// 	use: {
-			// 		loader: 'ts-loader',
-			// 		options: {
-			// 			transpileOnly: false, // true == FAST build, false == slow, fail on TS errors
-			// 			experimentalWatchApi: false, // ???
-			// 		},
-			// 	},
-			// 	exclude: /node_modules/,
-			// }
 		]
 	},
 	optimization: {
