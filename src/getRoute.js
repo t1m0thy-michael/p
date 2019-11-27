@@ -32,9 +32,9 @@ export const getRoute = async (routes, path) => {
 	}
 
 	// 404 - route not found
-	if (!found.fn) return false
+	if (!found.fn && !found.external) return false
 
-	// need to load additional script js file
+	// need to load additional script js file?
 	if (u.isString(found.filepath)) {
 		const s = await script(found.filepath)	
 		// 404 - additional script not found
