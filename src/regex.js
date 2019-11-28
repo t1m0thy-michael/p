@@ -2,7 +2,7 @@
 export const arg = {
 	isArray: /\[arr\((int|num|str|bool)\)\]/,
 	type: /\[(int|num|str|bool)\]/,
-	name: /::(?:\?)?([a-z0-9_-]+)/,
+	name: /::(?:\?)?([a-zA-Z0-9_-]+)/,
 }
 
 // extract arguments of type from URL
