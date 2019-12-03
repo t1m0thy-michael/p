@@ -8,3 +8,7 @@ export const setPageFn = (name, fn) => set(GLOBAL, [STORE_KEY, name], fn)
 
 export const getPageFn = (name) =>  get(GLOBAL, [STORE_KEY, name])
 
+export default {
+	setPageFn,
+	getPageFn,
+}

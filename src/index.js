@@ -6,7 +6,9 @@ import getRoute from './getRoute'
 import CONST from './constants'
 import errorRoutes from './error'
 
-export * from './gblFnStore'
+import gblFnStore from './gblFnStore'
+export const setPageFn = gblFnStore.setPageFn
+export const getPageFn = gblFnStore.getPageFn
 
 const THIS = {
 	app: {},
@@ -63,7 +65,6 @@ const getPath = (path = '') => {
 }
 
 const navigate = async (path, state = false) => {
-	
 	// make sure path makes sense
 	path = getPath(path)
 	
@@ -120,7 +121,6 @@ const navigate = async (path, state = false) => {
 }
 
 const eventsListeners = {}
-
 eventsListeners.click = (evt) => {
 	if (evt.target.tagName !== 'A') return
 	if (evt.target.host !== window.location.host) return // Goodby...
@@ -132,9 +132,13 @@ eventsListeners.popstate = (evt) => {
 	navigate(false, evt.state)
 }
 
-window.addEventListener('click', eventsListeners.click)
+const enableNavigateOnLink = () => {
+	window.addEventListener('click', eventsListeners.click)
+}
 
-window.addEventListener('popstate', eventsListeners.popstate)
+const disableNavigateOnLink = () => {
+	window.removeEventListener('click', eventsListeners.click)
+}
 
 const getEventListeners = () => eventsListeners
 
@@ -150,8 +154,17 @@ export const hooks = {
 	setOn404,
 	setRoute,
 	setState,
+	setPageFn,
+	getPageFn,
+	eventsListeners,
+	enableNavigateOnLink,
+	disableNavigateOnLink,
 }
 
-window.p = window.p || hooks
+if (!window.p) {
+	window.addEventListener('popstate', eventsListeners.popstate)
+	window.addEventListener('popstate', eventsListeners.popstate)
+	window.p = hooks
+} 
 
 export default hooks

@@ -13,6 +13,12 @@ module.exports = {
 		symlinks: false,
 	},
 	devtool: false,
+	watch: true,
+	watchOptions: {
+		aggregateTimeout: 1000,
+		ignored: [/node_modules/, /functions/, /webpack/],
+
+	},
 	module: {
 		rules: [{
 				test: /\.js$/,

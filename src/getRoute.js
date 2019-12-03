@@ -44,8 +44,7 @@ export const getRoute = async (routes, path) => {
 		delete found.filepath
 	}
 
-	// return shallow copy
-	return Object.assign({}, found)
+	return found
 }
 
 export default getRoute
