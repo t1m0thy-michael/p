@@ -12,7 +12,6 @@ export const getPageFn = gblFnStore.getPageFn
 
 export const p = ({
 	enableOnLink = true,
-	enableOnPushState = true,
 	enableOnPopState = true
 } = {}) => {
 
