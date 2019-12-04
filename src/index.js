@@ -10,161 +10,171 @@ import gblFnStore from './gblFnStore'
 export const setPageFn = gblFnStore.setPageFn
 export const getPageFn = gblFnStore.getPageFn
 
-const THIS = {
-	app: {},
-	const: CONST,
-	container: d('body'),
-	page: {
-		args: {},
-		name: '',
-		route: {},
+export const p = ({
+	enableOnLink = true,
+	enableOnPushState = true,
+	enableOnPopState = true
+} = {}) => {
+
+	if (window.p) throw new Error('P already initilised. I hope you didn\'t mean to do that...')
+
+	const THIS = {
+		app: {},
+		const: CONST,
+		container: d('body'),
+		page: {
+			args: {},
+			name: '',
+			route: {},
+			state: {},
+		},
 		state: {},
-	},
-	state: {},
-}
-
-const routes = {}
-
-const getRoutes = () => routes
-
-const on = {
-	beforeNavigate: () => {},
-	afterNavigate: () => {},
-	on404: () => { console.error(404) },
-}
-const setRoute = (arr) => {
-	u.makeSureItsAnArray(arr).forEach((def) => {
-		const r = createRoute(def)
-		routes[r.url] = r
-	})
-}
-
-// set default routes
-setRoute(errorRoutes)
-
-const setContainer = (selector) => {
-	const cont = d(selector)
-	if (!cont.exists || !cont.isAppended) throw 'container must exist'
-	THIS.container = cont
-}
-
-const setApp = (gbl) =>  THIS.app = gbl || {}
-const getApp = () => THIS
-
-const setState = (gbl) => THIS.state = gbl || {}
-
-const setAction = (key) => (fn) => on[key] = fn.bind(THIS)
-const setAfterNavigate = setAction('afterNavigate')
-const setBeforeNavigate = setAction('beforeNavigate')
-const setOn404 = setAction('on404')
-
-const getPath = (path = '') => {
-	if (!path) path = window.location.pathname
-	if (String(path).substr(0, 1) !== '/') path = `/${path}`
-	return path
-}
-
-const navigate = async (path, state = false) => {
-	// make sure path makes sense
-	path = getPath(path)
-	
-	// find appropriate route
-	let r = await getRoute(routes, path)
-
-	// bugger.
-	if (!r) {
-		if (path !== window.location.pathname) await on.on404(path)
-		r = await getRoute(routes, '/404')
 	}
 
-	if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
+	const routes = {}
 
-	// anything to do before we leave??
-	const onLeave = u.get(THIS, 'page.route.onLeave')
-	if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
+	const getRoutes = () => routes
 
-	// save current state
-	history.replaceState(THIS.page.state, null, null)
-
-	// external
-	if (r.external && window.location.pathname !== path) {
-		window.location = path
-		return
+	const on = {
+		beforeNavigate: () => {},
+		afterNavigate: () => {},
+		on404: () => { console.error(404) },
 	}
 
-	// clear container?
-	if (r.clearBefore) THIS.container.empty().scrollTop(0)
-
-	const pageArgs = Object.assign({}, r.defaultArguments, r.arguments)
-
-	// update THIS.page with new route information
-	THIS.page = { 
-		args: pageArgs  || {},
-		name: r.name,
-		route: r,
-		state: state || {},
+	const setRoute = (arr) => {
+		u.makeSureItsAnArray(arr).forEach((def) => {
+			const r = createRoute(def)
+			routes[r.url] = r
+		})
 	}
 
-	// history/state stuff
-	if (!state) {
-		history.pushState(THIS.page.state, r.name, path)
-	} else {
-		history.replaceState(state, r.name, path)
+	// set default routes
+	setRoute(errorRoutes)
+
+	const setContainer = (selector) => {
+		const cont = d(selector)
+		if (!cont.exists || !cont.isAppended) throw 'container must exist'
+		THIS.container = cont
 	}
 
-	// bind THIS, and call with defaults/args
-	if (!u.isFunction(r.fn)) return
+	const setApp = (gbl) =>  THIS.app = gbl || {}
+	const getApp = () => THIS
 
-	await r.fn.bind(THIS)(pageArgs)
+	const setState = (gbl) => THIS.state = gbl || {}
+	const setAfterNavigate = (fn) => on['afterNavigate'] = fn.bind(THIS)
+	const setBeforeNavigate = (fn) => on['beforeNavigate'] = fn.bind(THIS)
+	const setOn404 = (fn) => on['on404'] = fn.bind(THIS)
 
-	await on.afterNavigate()
-}
+	const navigate = async (_path, state = false) => {
+		
+		// make sure path makes sense
+		// default to window location
+		if (!_path) _path = `${window.location.pathname}${window.location.search}`
 
-const eventsListeners = {}
-eventsListeners.click = (evt) => {
-	if (evt.target.tagName !== 'A') return
-	if (evt.target.host !== window.location.host) return // Goodby...
-	evt.preventDefault()
-	navigate(evt.target.pathname)
-}
+		// get path and query string
+		let [path, search] = _path.split('?')
 
-eventsListeners.popstate = (evt) => {
-	navigate(false, evt.state)
-}
+		// tidy path & search string
+		if (path.substr(0, 1) !== '/') path = `/${path}`
+		if (!search) search = '' 
+		let location = path
 
-const enableNavigateOnLink = () => {
-	window.addEventListener('click', eventsListeners.click)
-}
+		// find appropriate route
+		let r = await getRoute(routes, path)
 
-const disableNavigateOnLink = () => {
-	window.removeEventListener('click', eventsListeners.click)
-}
+		// bugger.
+		if (!r) r = await getRoute(routes, '/404')
 
-const getEventListeners = () => eventsListeners
+		if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
 
-export const hooks = {
-	getApp,
-	getEventListeners,
-	getRoutes,
-	navigate,
-	setAfterNavigate,
-	setApp,
-	setBeforeNavigate,
-	setContainer,
-	setOn404,
-	setRoute,
-	setState,
-	setPageFn,
-	getPageFn,
-	eventsListeners,
-	enableNavigateOnLink,
-	disableNavigateOnLink,
-}
+		// anything page specific to do before we leave??
+		const onLeave = u.get(THIS, 'page.route.onLeave')
+		if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 
-if (!window.p) {
-	window.addEventListener('popstate', eventsListeners.popstate)
-	window.addEventListener('popstate', eventsListeners.popstate)
+		// save current state
+		history.replaceState(THIS.page.state, null, null)
+
+		// external
+		if (r.external && window.location.pathname !== path) { // prevents redirect loop
+			window.location = _path
+			return
+		}
+		
+		// clear container?
+		if (r.clearBefore) THIS.container.empty().scrollTop(0)
+
+		// provide query string?
+		const searchObj = {}
+		if (r.allowQueryString && search) {
+			const obj = new URLSearchParams(search)
+			obj.forEach((val, key) => searchObj[key] = val)
+			location = `${path}?${search}`
+		}
+
+		const pageArgs = Object.assign({}, r.defaultArguments, r.arguments, searchObj)
+
+		// update THIS.page with new route information
+		THIS.page = { 
+			args: pageArgs  || {},
+			name: r.name,
+			route: r,
+			state: state || {},
+		}
+
+		// history/state stuff
+		if (!state) {
+			history.pushState(THIS.page.state, r.name, location)
+		} else {
+			history.replaceState(state, r.name, location)
+		}
+
+		// bind THIS, and call with defaults/args
+		if (!u.isFunction(r.fn)) return
+
+		await r.fn.bind(THIS)(pageArgs)
+
+		await on.afterNavigate()
+	}
+
+	const eventsListeners = {}
+
+	eventsListeners.click = (evt) => {
+		if (evt.target.tagName !== 'A') return
+		if (evt.target.host !== window.location.host) return // Goodby...
+		evt.preventDefault()
+		navigate(`${evt.target.pathname}${evt.target.search}`)
+	}
+
+	eventsListeners.popstate = (evt) =>  navigate(false, evt.state) 
+
+	if (enableOnLink) {
+		window.addEventListener('click', eventsListeners.click)
+	}
+
+	if (enableOnPopState) {
+		window.addEventListener('popstate', eventsListeners.popstate)
+	}
+
+	const getEventListeners = () => eventsListeners
+
+	const hooks = {
+		getApp,
+		getEventListeners,
+		getRoutes,
+		navigate,
+		setAfterNavigate,
+		setApp,
+		setBeforeNavigate,
+		setContainer,
+		setOn404,
+		setRoute,
+		setState,
+		setPageFn,
+		getPageFn,
+	}
+
 	window.p = hooks
-} 
 
-export default hooks
+	return hooks
+}
+export default p

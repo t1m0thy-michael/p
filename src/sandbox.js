@@ -4,14 +4,15 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import p from './index'
+import P from './index'
+const p = P()
 
 d([
 	{ h1: 'Title here'},
 	{ div: [
 		{ a: 'Home', name: 'Home', href: '/' },
 		d.br(),
-		{ a: 'Page 2', name: 'Page 2', href: '/page2/qwerty/123' },
+		{ a: 'Page 2', name: 'Page 2', href: '/page2/qwerty/123?test=123&test1=456' },
 		d.br(),
 		{ a: 'Page 3', name: 'Page 3', href: '/page3/123/456' },
 		d.br(),
@@ -135,11 +136,13 @@ p.setRoute([
 		name: 'page 2',
 		url: 'page2/::arg1[str]/::arg2[int]',
 		fn: pageFactory('page 2'),
+		allowQueryString: true,
 		// onLeave: () => alert('bye, bye 2')
 	}, {
 		name: 'page 3',
 		url: 'page3/::arg1[int]/::arg2[int]',
 		fn: pageFactory('page 3'),
+		allowQueryString: false,
 		// onLeave: function () {
 		// 	console.log(this)
 		// }

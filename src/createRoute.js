@@ -8,6 +8,7 @@ export const createRoute = ({
 	url,
 	// opts
 	clearBefore = true,
+	allowQueryString = true,
 	external = false,
 	filepath = null,
 	// events
@@ -44,17 +45,18 @@ export const createRoute = ({
 	})
 
 	return {
+		allowQueryString: allowQueryString,
 		args: args,						// description of expected arguments
+		clearBefore: clearBefore,
+		external: external,
 		filepath: filepath, 			// string. src path of required external script
 		fn: fn,							// fn or name of fn on global object from 'filepath' sctipt
 		len: args.length + path.length,					
 		name: name,
+		onLeave: onLeave,
 		pathArr: path,
 		rx: new RegExp(`^${rx}$`),
 		url: url, 						// url DEFINITION. path with arg type placeholders
-		clearBefore: clearBefore,
-		onLeave: onLeave,
-		external: external
 	}
 }
 
