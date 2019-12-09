@@ -4,8 +4,7 @@ import d from '@t1m0thy_michael/d'
 d.setEventbus(e)
 window.e = e
 
-import P from './index'
-const p = P()
+import p from './index'
 
 d([
 	{ h1: 'Title here'},
@@ -83,7 +82,7 @@ const pageFactory = (title) => function (...args) {
 			APP.state.clickCount || '',
 		],
 		on: {
-			event: 'testClick',
+			event: `test_topic_${this.page.name}`,
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`APP state: ${APP.state.clickCount}`)
@@ -97,7 +96,7 @@ const pageFactory = (title) => function (...args) {
 			APP.page.state.clickCount || '',
 		],
 		on: {
-			event: 'testClick',
+			event: `test_topic_${this.page.name}`,
 			fn: function () {
 				console.log(APP.state, this, 'hello?')
 				this.innerHTML(`PAGE state: ${APP.page.state.clickCount}`)

@@ -10,12 +10,9 @@ import gblFnStore from './gblFnStore'
 export const setPageFn = gblFnStore.setPageFn
 export const getPageFn = gblFnStore.getPageFn
 
-export const p = ({
-	enableOnLink = true,
-	enableOnPopState = true
-} = {}) => {
-
-	if (window.p) throw new Error('P already initilised. I hope you didn\'t mean to do that...')
+export const p = (() => {
+	
+	if (window.p) return window.p
 
 	const THIS = {
 		app: {},
@@ -73,7 +70,7 @@ export const p = ({
 		// get path and query string
 		let [path, search] = _path.split('?')
 
-		// tidy path & search string
+		// tidy path
 		if (path.substr(0, 1) !== '/') path = `/${path}`
 		if (!search) search = '' 
 		let location = path
@@ -85,10 +82,6 @@ export const p = ({
 		if (!r) r = await getRoute(routes, '/404')
 
 		if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
-
-		// anything page specific to do before we leave??
-		const onLeave = u.get(THIS, 'page.route.onLeave')
-		if (u.isFunction(onLeave) && await onLeave.bind(THIS)() === CONST.PREVENT_NAVIGATION) return
 
 		// save current state
 		history.replaceState(THIS.page.state, null, null)
@@ -144,21 +137,32 @@ export const p = ({
 		navigate(`${evt.target.pathname}${evt.target.search}`)
 	}
 
-	eventsListeners.popstate = (evt) =>  navigate(false, evt.state) 
+	eventsListeners.popstate = (evt) => navigate(false, evt.state) 
 
-	if (enableOnLink) {
-		window.addEventListener('click', eventsListeners.click)
+	let onLinkEnabled = false
+	const enableOnLink = () => {
+		if (!onLinkEnabled) window.addEventListener('click', eventsListeners.click)
+		onLinkEnabled = true
 	}
-
-	if (enableOnPopState) {
-		window.addEventListener('popstate', eventsListeners.popstate)
+	const disableOnLink = () =>{
+		if (onLinkEnabled)  window.removeEventListener('click', eventsListeners.click)
+		onLinkEnabled = false
 	}
+	enableOnLink()
 
-	const getEventListeners = () => eventsListeners
+	let onPopStateEnabled = false
+	const enableOnPopState = () => {
+		if (!onPopStateEnabled) window.addEventListener('popstate', eventsListeners.popstate)
+		onPopStateEnabled = true
+	}
+	const disableOnPopState = () => {
+		if (onPopStateEnabled) window.removeEventListener('popstate', eventsListeners.popstate)
+		onPopStateEnabled = false
+	}
+	enableOnPopState()
 
-	const hooks = {
+	window.p = {
 		getApp,
-		getEventListeners,
 		getRoutes,
 		navigate,
 		setAfterNavigate,
@@ -170,10 +174,13 @@ export const p = ({
 		setState,
 		setPageFn,
 		getPageFn,
+		enableOnLink,
+		enableOnPopState,
+		disableOnLink,
+		disableOnPopState
 	}
 
-	window.p = hooks
+	return window.p
+})()
 
-	return hooks
-}
 export default p

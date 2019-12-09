@@ -4,15 +4,13 @@ import regx from './regex'
 export const createRoute = ({
 	// required
 	fn,
-	name,
 	url,
 	// opts
+	name,
 	clearBefore = true,
 	allowQueryString = true,
 	external = false,
 	filepath = null,
-	// events
-	onLeave = () => {},
 }) => {
 	let rx = ''
 	let args = []
@@ -53,7 +51,6 @@ export const createRoute = ({
 		fn: fn,							// fn or name of fn on global object from 'filepath' sctipt
 		len: args.length + path.length,					
 		name: name,
-		onLeave: onLeave,
 		pathArr: path,
 		rx: new RegExp(`^${rx}$`),
 		url: url, 						// url DEFINITION. path with arg type placeholders
