@@ -95,6 +95,8 @@ export const p = (() => {
 		// clear container?
 		if (r.clearBefore) THIS.container.empty().scrollTop(0)
 
+		if (r.name) document.title = r.name
+
 		// provide query string?
 		const searchObj = {}
 		if (r.allowQueryString && search) {
