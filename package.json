@@ -32,7 +32,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
-    "@t1m0thy_michael/d": "^0.3.23",
+    "@t1m0thy_michael/d": "^0.3.29",
     "@t1m0thy_michael/u": "0.0.7"
   }
 }
