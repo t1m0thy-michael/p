@@ -63,66 +63,76 @@ p.setContainer('#cont1')
 
 
 
-const pageFactory = (title) => function (...args) {
+const pageFactory = (title) => {
+	
+	const pageFn = function (...args) {
 
-	if (!this.page.state.name) this.page.state.name = this.page.name
+		if (!this.page.state.name) this.page.state.name = this.page.name
 
-	const APP = this
+		const APP = this
 
-	const ag = d({
-		div: [
-			'Args',
-			JSON.stringify(args)
-		]
-	})
+		console.log(APP)
 
-	const state = d({
-		div: [
-			'APP state: ',
-			APP.state.clickCount || '',
-		],
-		on: {
-			event: `test_topic_${this.page.name}`,
-			fn: function () {
-				console.log(APP.state, this, 'hello?')
-				this.innerHTML(`APP state: ${APP.state.clickCount}`)
-			}
-		}
-	})
+		const ag = d({
+			div: [
+				'Args',
+				JSON.stringify(args)
+			]
+		})
 
-	const pageState = d({
-		div: [
-			'PAGE state: ',
-			APP.page.state.clickCount || '',
-		],
-		on: {
-			event: `test_topic_${this.page.name}`,
-			fn: function () {
-				console.log(APP.state, this, 'hello?')
-				this.innerHTML(`PAGE state: ${APP.page.state.clickCount}`)
-			}
-		}
-	})
-
-	d([
-		{ h3: title },
-		ag,
-		state,
-		pageState,
-		{
-			button: 'click me',
+		const state = d({
+			div: [
+				'APP state: ',
+				APP.state.clickCount || '',
+			],
 			on: {
-				event: 'click',
-				fn: () => {
-					this.state.clickCount = this.page.name
-					this.page.state.clickCount = this.page.name
-					console.log(this.page.state)
-
-				},
-				topic: 'testClick'
+				event: [`test_topic_${this.page.name}`],
+				fn: function () {
+					console.log(APP.state, this, 'hello?')
+					this.innerHTML(`APP state: ${APP.state.clickCount}`)
+				}
 			}
-		}
-	]).appendTo(this.container)
+		})
+
+		const pageState = d({
+			div: [
+				'PAGE state: ',
+				APP.page.state.clickCount || APP.state.clickCount || 'not set',
+			],
+			on: {
+				event: [`test_topic_${this.page.name}`],
+				fn: function () {
+					console.log(APP.state, this, 'hello?')
+					this.innerHTML(`PAGE state: ${APP.page.state.clickCount ||  'not set'}`)
+				}
+			}
+		})
+
+		d([
+			{ h3: title },
+			ag,
+			state,
+			pageState,
+			{
+				button: 'click me',
+				on: {
+					event: 'click',
+					fn: () => {
+						this.state.clickCount = this.page.name
+						this.page.state.clickCount = this.page.name
+						console.log(this)
+
+					},
+					topic: 'testClick'
+				}
+			}
+		]).appendTo(this.container)
+	}
+
+	pageFn.tidy = function (...args) { console.log('tidy', args, this); return true }
+
+	return pageFn
+
 }
  
 p.setRoute([

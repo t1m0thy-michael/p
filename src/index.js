@@ -27,6 +27,8 @@ export const p = (() => {
 		state: {},
 	}
 
+	let current = false
+
 	const routes = {}
 
 	const getRoutes = () => routes
@@ -81,6 +83,16 @@ export const p = (() => {
 		// bugger.
 		if (!r) r = await getRoute(routes, '/404')
 
+		// nowhere to go? do nothing.
+		if (!u.isFunction(r.fn)) return
+
+		// run pervious (still 'current') pages tidy function if it exists
+		if (u.isFunction(current.tidy)) {
+			// canx navigation if false
+			if (!current.tidy.bind(THIS)()) return
+		}
+		
+		// we are going to navigate somewhere...
 		if (await on.beforeNavigate() === CONST.PREVENT_NAVIGATION) return
 
 		// save current state
@@ -91,11 +103,6 @@ export const p = (() => {
 			window.location = _path
 			return
 		}
-		
-		// clear container?
-		if (r.clearBefore) THIS.container.empty().scrollTop(0)
-
-		if (r.name) document.title = r.name
 
 		// provide query string?
 		const searchObj = {}
@@ -107,25 +114,31 @@ export const p = (() => {
 
 		const pageArgs = Object.assign({}, r.defaultArguments, r.arguments, searchObj)
 
-		// update THIS.page with new route information
-		THIS.page = { 
-			args: pageArgs  || {},
-			name: r.name,
-			route: r,
-			state: state || {},
-		}
-
+		
 		// history/state stuff
 		if (!state) {
 			history.pushState(THIS.page.state, r.name, location)
 		} else {
 			history.replaceState(state, r.name, location)
+			THIS.page.state = state
 		}
 
-		// bind THIS, and call with defaults/args
-		if (!u.isFunction(r.fn)) return
+		// update THIS.page with new route information
+		THIS.page = { 
+			args: pageArgs || {},
+			name: r.name,
+			route: r,
+			state: state || {},
+		}
 
-		await r.fn.bind(THIS)(pageArgs)
+		// clear container?
+		if (r.clearBefore) THIS.container.empty().scrollTop(0)
+
+		if (r.name) document.title = r.name
+
+		current = r.fn
+
+		await current.bind(THIS)(pageArgs)
 
 		await on.afterNavigate()
 	}
