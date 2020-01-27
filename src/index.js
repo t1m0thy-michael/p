@@ -83,6 +83,12 @@ export const p = (() => {
 		// bugger.
 		if (!r) r = await getRoute(routes, '/404')
 
+		// external
+		if (r.external && window.location.pathname !== path) { // prevents redirect loop
+			window.location = _path
+			return
+		}
+
 		// nowhere to go? do nothing.
 		if (!u.isFunction(r.fn)) return
 
@@ -97,12 +103,6 @@ export const p = (() => {
 
 		// save current state
 		history.replaceState(THIS.page.state, null, null)
-
-		// external
-		if (r.external && window.location.pathname !== path) { // prevents redirect loop
-			window.location = _path
-			return
-		}
 
 		// provide query string?
 		const searchObj = {}
