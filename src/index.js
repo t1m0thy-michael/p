@@ -95,7 +95,7 @@ export const p = (() => {
 		// run pervious (still 'current') pages tidy function if it exists
 		if (u.isFunction(current.tidy)) {
 			// canx navigation if false
-			if (!current.tidy.bind(THIS)()) return
+			if (!await current.tidy.bind(THIS)()) return
 		}
 		
 		// we are going to navigate somewhere...
