@@ -85,6 +85,13 @@ export const p = (() => {
 
 		// external
 		if (r.external && window.location.pathname !== path) { // prevents redirect loop
+			
+			// run pervious pages tidy function if it exists
+			if (u.isFunction(current.tidy)) {
+				// canx navigation if false
+				if (!await current.tidy.bind(THIS)()) return
+			}
+			
 			window.location = _path
 			return
 		}
@@ -92,7 +99,7 @@ export const p = (() => {
 		// nowhere to go? do nothing.
 		if (!u.isFunction(r.fn)) return
 
-		// run pervious (still 'current') pages tidy function if it exists
+		// run pervious pages tidy function if it exists
 		if (u.isFunction(current.tidy)) {
 			// canx navigation if false
 			if (!await current.tidy.bind(THIS)()) return
